@@ -4,19 +4,25 @@
 
 # A script to svn sync some directory.
 
-if [ $# -ne 1 ];
+if [ $# -lt 1 ];
 then
-    echo usage: $0 '<dir>'
+    echo usage: $0 '<dir> ...'
     exit 1
 fi
 
-if [ ! -d "$1" ];
-then
-    echo "not a dir: $1"
-    exit 2
-fi
+oldpwd=`pwd`
 
-cd "$1" || exit 3
-url="file://`pwd`"
-echo svnsync sync $url
-exec svnsync sync $url
+for dir in $@;
+do
+    cd $oldpwd
+    if [ ! -d "$dir" ];
+    then
+	echo "not a dir: $dir"
+	exit 2
+    fi
+
+    cd "$dir" || exit 3
+    url="file://`pwd`"
+    echo svnsync sync $url
+    svnsync sync $url || exit 4
+done
