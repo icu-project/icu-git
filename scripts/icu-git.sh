@@ -70,6 +70,7 @@ dosub()
     set -o xtrace
     git svn ${VERB} ${COMMON_OPTS} "${REPO}" "${SUB}" -T "${SUB}/trunk"  -t "${SUB}/tags" -b "${SUB}/branches" || exit 1
     ( cd "${SUB}" && ../../${TOOLDIR}/gitfilter.sh ) || exit 1
+    #git remote add github "git@github.com:icu-project/${SUB}.git"
     set +o xtrace
 }
 
@@ -78,9 +79,13 @@ echo "REPO=${REPO}"
 
 for sub in ${SUBS}; do
     dosub "${sub}"
+    # should have done this a long time ago. Maybe 2006.
+    if [ -d icu & ! -d icu4c ]; then
+	mv -v icu icu4c
+    fi
+    if [ -d tools & ! -d icu-tools ]; then
+	mv -v tools icu-tools
+    fi
 done
 
-# should have done this a long time ago. Maybe 2006.
-if [ -d icu & ! -d icu4c ]; then
-    mv -v icu icu4c
-done
+
