@@ -1,7 +1,7 @@
 abhinavg = Abhinav Gupta <abhinavg@svn.icu-project.org>
 agousev = Alexey Gousev <agousev@svn.icu-project.org>
-aheninger = Andy Heninger <aheninger@svn.icu-project.org>
-aheninger-oss = Andy Heninger <aheninger@svn.icu-project.org>
+aheninger = Andy Heninger <andy.heninger@gmail.com>
+aheninger-oss = Andy Heninger <andy.heninger@gmail.com>
 ajmacher = Andrew J Macheret <ajmacher@svn.icu-project.org>
 alan = Alan Liu <liu@svn.icu-project.org>
 Alan = Alan Liu <liu@svn.icu-project.org>
@@ -32,7 +32,7 @@ goldsmit = Deborah Goldsmith <goldsmit@svn.icu-project.org>
 goldsmith-oss = Deborah Goldsmith <goldsmit@svn.icu-project.org>
 grhoten = George Rhoten <grhoten@svn.icu-project.org>
 grhoten-oss = George Rhoten <grhoten@svn.icu-project.org>
-heninger = Andy Heninger <aheninger@svn.icu-project.org>
+heninger = Andy Heninger <andy.heninger@gmail.com>
 hshih = Helena Chapman <hshih@svn.icu-project.org>
 icuhtml = Nobody <cvs@svn.icu-project.org>
 jali01 = Jonathan Lai <jali01@svn.icu-project.org>
@@ -102,4 +102,3 @@ yves = Yves Arrouye <yves@svn.icu-project.org>
 yves-oss = Yves Arrouye <yves@svn.icu-project.org>
 zhou = YuQian Zhou <zhou@svn.icu-project.org>
 kazede =  <kazede@svn.icu-project.org>
-
