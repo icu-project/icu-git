@@ -22,13 +22,13 @@ VERB="clone -q"
 
 # Which subrepos to do? icu4jni is smaller..
 SUBS=
-SUBS+="tools "
-SUBS+="icuhtml "
-SUBS+="icu4jni "
+#SUBS+="tools "
+#SUBS+="icuhtml "
+#SUBS+="icu4jni "
 SUBS+="icu4j "
-SUBS+="icu "
-SUBS+="data "
-SUBS+="icuapps "
+#SUBS+="icu "
+#SUBS+="data "
+#SUBS+="icuapps "
 
 
 if [ ! -d ${REPODIR} ]; then
@@ -43,6 +43,30 @@ if [ ! -d ${REPODIR}/${REPONAME} ]; then
 fi
 # URL to repo
 REPO=file://`cd  ${REPODIR}/${REPONAME}&&pwd`
+
+# sanity check. Save hours of processing later
+echo "# Fetching all authors from ${REPO} ..."
+svn log --quiet "${REPO}" | grep "^r" | awk '{print $3}' | sort | uniq > scripts/authors-all.txt
+cut -d' ' -f1 < scripts/authors.txt | sort > scripts/authors-configured.txt
+echo "# Making sure scripts/authors.txt is up to date. List of users NOT in scripts/authors.txt:"
+
+if fgrep -v -f scripts/authors-configured.txt scripts/authors-all.txt;
+then
+    echo "^^ please add these to authors.txt and try again."
+    exit 1
+else
+    echo "# -- OK! You may proceed."
+fi
+
+
+#$ fgrep -v -f authors-configured.txt authors-all.txt 
+#scott
+#! srl@drawbridge:~/src/icu-git/scripts
+#$ fgrep -v -f authors-configured.txt ^C
+#(130) ! srl@drawbridge:~/src/icu-git/scripts
+#
+
+
 
 if [ ! -d "${BASEDIR}" ]; then
     mkdir -vp "${BASEDIR}"
@@ -68,7 +92,7 @@ dosub()
     fi
     echo "# ${SUB}"
     set -o xtrace
-    git svn ${VERB} ${COMMON_OPTS} "${REPO}" "${SUB}" -T "${SUB}/trunk"  -t "${SUB}/tags" -b "${SUB}/branches" || exit 1
+    git svn ${VERB} ${COMMON_OPTS} "${REPO}" "${SUB}" -T "${SUB}/trunk"  -t "${SUB}/tags" -b "${SUB}/branches" --ignore-paths="^/icu4j/(?:trunk|tags/.*|branches/.*)/main/shared/data" || exit 1
     ( cd "${SUB}" && ../../${TOOLDIR}/gitfilter.sh ) || exit 1
     #git remote add github "git@github.com:icu-project/${SUB}.git"
     set +o xtrace
