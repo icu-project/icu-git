@@ -104,10 +104,10 @@ echo "REPO=${REPO}"
 for sub in ${SUBS}; do
     dosub "${sub}"
     # should have done this a long time ago. Maybe 2006.
-    if [ -d icu & ! -d icu4c ]; then
+    if [ -d icu -a ! -d icu4c ]; then
 	mv -v icu icu4c
     fi
-    if [ -d tools & ! -d icu-tools ]; then
+    if [ -d tools -a ! -d icu-tools ]; then
 	mv -v tools icu-tools
     fi
 done
