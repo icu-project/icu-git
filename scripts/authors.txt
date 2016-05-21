@@ -104,3 +104,5 @@ yoshito = Yoshito Umaoka <yoshito@svn.icu-project.org>
 yves = Yves Arrouye <yves@svn.icu-project.org>
 yves-oss = Yves Arrouye <yves@svn.icu-project.org>
 zhou = YuQian Zhou <zhou@svn.icu-project.org>
+shane = shane <shane@svn.icu-project.org>
+
