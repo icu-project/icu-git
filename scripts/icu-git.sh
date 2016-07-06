@@ -15,6 +15,7 @@ XREPO=http://source.icu-project.org/repos/${REPONAME}
 # rewrite the root to be the public URL
 TOOLDIR=`dirname $ME`
 COMMON_OPTS="--authors-file=../${TOOLDIR}/authors.txt --prefix=origin/ --rewrite-root=${XREPO}/"
+#SPLIT_OPTS="--ignore-paths='^/icu4j/(?:trunk|tags/.*|branches/.*)/main/shared/data'"
 #BASEDIR=${TOOLDIR}/git
 BASEDIR=./git
 VERB="clone -q"
@@ -26,7 +27,8 @@ SUBS=
 #SUBS+="icuhtml "
 #SUBS+="icu4jni "
 SUBS+="icu4j "
-#SUBS+="icu "
+# icu --> icu4c
+SUBS+="icu "
 #SUBS+="data "
 #SUBS+="icuapps "
 
@@ -92,9 +94,11 @@ dosub()
     fi
     echo "# ${SUB}"
     set -o xtrace
-    git svn ${VERB} ${COMMON_OPTS} "${REPO}" "${SUB}" -T "${SUB}/trunk"  -t "${SUB}/tags" -b "${SUB}/branches" --ignore-paths="^/icu4j/(?:trunk|tags/.*|branches/.*)/main/shared/data" || exit 1
+    git svn ${VERB} ${COMMON_OPTS} "${REPO}" "${SUB}" -T "${SUB}/trunk"  -t "${SUB}/tags" -b "${SUB}/branches/*" ${SPLIT_OPTS} || exit 1
     ( cd "${SUB}" && ../../${TOOLDIR}/gitfilter.sh ) || exit 1
-    #git remote add github "git@github.com:icu-project/${SUB}.git"
+    ( cd "${SUB}" && git remote add github "git@github.com:icu-project/${SUB}.git" ) || echo 'perhaps git remote was already there'
+    # tag all releases
+    ( cd "${SUB}" && ../../${TOOLDIR}/update-tags.sh )
     set +o xtrace
 }
 
