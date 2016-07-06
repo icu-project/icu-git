@@ -22,6 +22,10 @@ do
     fi
 
     cd "$dir" || exit 3
+    if [ ! -x hooks/pre-revprop-change ];
+    then
+	ln -vsf `which true` `pwd`/hooks/pre-revprop-change
+    fi
     url="file://`pwd`"
     echo svnsync sync $url
     svnsync sync $url || exit 4
