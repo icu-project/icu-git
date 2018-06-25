@@ -14,5 +14,6 @@ fi
 set -x
 git init --bare git/icu.git
 subgit configure --layout auto file://$(pwd)/repos/icubis git/icu.git
-cp subgit.conf git/icu.git/subgit/config
-subgit install --rebuild git/icu.git && (cd git/icu.git && sh ../../scripts/gitfilter.sh )
+mv -v git/icu.git/subgit/config subgit.conf~ ; cp -v subgit.conf git/icu.git/subgit/config
+subgit install --rebuild git/icu.git || exit 1
+# && (cd git/icu.git && sh ../../scripts/gitfilter.sh )
