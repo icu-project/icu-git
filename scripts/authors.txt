@@ -109,5 +109,5 @@ nrunge = Norbert Runge <nrunge@google.com>
 lkemmel = Lina Kemmel <lkemmel@il.ibm.com>
 jefgen = Jeff Genovy <Jeff.Genovy@microsoft.com>
 shawnste = Shawn Steele <Shawn.Steele@microsoft.com>
-jugu =  <jugu@svn.icu-project.org>
+jugu = Jugu Dannie Sundar <jugu.87@gmail.com>
 mingyzha = William Zhao <mingyzha@microsoft.com>
