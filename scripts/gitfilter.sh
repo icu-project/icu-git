@@ -5,6 +5,4 @@
 # A filter to add in the ICU bug tracking numbers.
 
 set -x
-git filter-branch -f --msg-filter  'sed -e "s%ticket:\([0-9]*\)[ :]*\(.*\)$%\2\\
-\\
-X-Ticket-URL: https://ssl.icu-project.org/trac/ticket/\1%g"'  -- --all
+git filter-branch -f --msg-filter  'sed -e "s%ticket:\(\d+\)%[ICU-\1]%g"'  -- --all
