@@ -103,14 +103,13 @@ fi
 
 CMD="svn ps svn:log --revprop -r ${rev} -F ${TMPF}.fix $repo"
 echo "# ${CMD}"
-exit 0
 
 if [[ $repo == '.' ]];
 then
     echo "type YES to do, ^C to kill"
     read foo
 else
-    foo = "YES"
+    foo="YES"
 fi
 
 if [[ $foo = "YES" ]];
