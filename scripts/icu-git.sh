@@ -18,10 +18,11 @@ mv -v git/icu.git/subgit/config subgit.conf~
 cp -v subgit.conf git/icu.git/subgit/config
 subgit install --rebuild git/icu.git || exit 1
 
-# && (cd git/icu.git && sh ../../scripts/gitfilter.sh )
+cd git/icu.git && sh ../../scripts/gitfilter.sh 
 
 ## If successful, then we no longer need SubGit
-# subgit uninstall --purge git/icu.git
+subgit uninstall --purge git/icu.git
+
 ## clean up anything leftover from the filter-branch.
 git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin ; git reflog expire --expire=now --all
 git gc --prune=now --aggressive
