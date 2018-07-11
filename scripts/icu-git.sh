@@ -31,3 +31,5 @@ git gc --prune=now --aggressive
 git lfs migrate import --everything --include="*.jar,*.dat,*.zip,*.gz,*.bz2,*.gif"
 
 git reflog expire --expire=now --all && git gc --prune=now --aggressive
+
+git filter-branch --tree-filter 'perl clean-gitattributes.pl' --tag-name-filter cat --prune-empty -- --all
