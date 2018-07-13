@@ -4,32 +4,71 @@
 # Copyright (C) 2015, International Business Machines Corporation and Others. All Rights Reserved.
 # This file is part of the ICU project. http://icu-project.org
 
-# Convert ICU to Git.
+# Convert the ICU source repository from SVN to Git.
 
-if [ -d git/icu.git ];
+# Locations/paths. (no trailing slash).
+svnRepoDir=/home/jefgen/icubis
+gitRepoDir=/data/icu/git
+icuConversionHelpersDir=/data/icu/icu-git
+userHome=/home/jefgen
+
+if [ -d $gitRepoDir/icu.git ];
 then
-    echo cowardly refusing to overwrite git/icu.git
+    echo "cowardly refusing to overwrite icu.git"
     exit 1
 fi
+
 set -x
-git init --bare git/icu.git
-subgit configure --layout auto file://$(pwd)/repos/icubis git/icu.git
-mv -v git/icu.git/subgit/config subgit.conf~
-cp -v subgit.conf git/icu.git/subgit/config
-subgit install --rebuild git/icu.git || exit 1
 
-cd git/icu.git && sh ../../scripts/gitfilter.sh 
+# Set the paths in the SubGit configuration file.
+sed -i "s%REPLACEME-CONVERSION-HELPERS%$icuConversionHelpersDir%g" $icuConversionHelpersDir/subgit.conf
+sed -i "s%REPLACEME-ICU-SVN%$svnRepoDir%g" $icuConversionHelpersDir/subgit.conf
+sed -i "s%REPLACEME-USER-HOME%$userHome%g" $icuConversionHelpersDir/subgit.conf
 
-## If successful, then we no longer need SubGit
-subgit uninstall --purge git/icu.git
+git init --bare $gitRepoDir/icu.git || exit 1
+subgit configure --layout auto file://$svnRepoDir $gitRepoDir/icu.git || exit 1
 
-## clean up anything leftover from the filter-branch.
-git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin ; git reflog expire --expire=now --all
-git gc --prune=now --aggressive
+# Replace the SubGit config with our custom configuration.
+mv -v $gitRepoDir/icu.git/subgit/config $gitRepoDir/icu.git/subgit/subgit.conf~
+cp -v $icuConversionHelpersDir/subgit.conf $gitRepoDir/icu.git/subgit/config
 
-## Migrate select file types to LFS. (this takes awhile).
-git lfs migrate import --everything --include="*.jar,*.dat,*.zip,*.gz,*.bz2,*.gif"
+# Actually convert from SVN to git (this takes a long time).
+subgit import $gitRepoDir/icu.git || exit 1
 
+cd $gitRepoDir/icu.git
+
+# Conversion was successful, no longer need SubGit.
+subgit uninstall --purge $gitRepoDir/icu.git
+
+# clean up.
 git reflog expire --expire=now --all && git gc --prune=now --aggressive
 
-git filter-branch --tree-filter 'perl clean-gitattributes.pl' --tag-name-filter cat --prune-empty -- --all
+## Make a backup
+#cp -a $gitRepoDir/icu.git $gitRepoDir/backup-raw-subgit-icu.git
+
+# Fix commit IDs and SVN rev numbers.
+sh $icuScriptsDir/scripts/gitfilter.sh
+
+# clean up.
+git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+
+# Migrate select file types to LFS. (this also takes awhile).
+git lfs migrate import --everything --include="*.jar,*.dat,*.zip,*.gz,*.bz2,*.gif" || exit 1
+
+# clean up.
+git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+
+# Fix the .gitattributes files.
+git filter-branch --tree-filter "perl $icuConversionHelpersDir/scripts/clean-gitattributes.pl" --tag-name-filter cat --prune-empty -- --all || exit 1
+
+# clean up.
+git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+
+# Output information on the repo size.
+git lfs migrate info --everything --top=25
+git count-objects -vH
+du -sh .
+du -sh lfs/
