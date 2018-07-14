@@ -47,7 +47,7 @@ git reflog expire --expire=now --all && git gc --prune=now --aggressive
 #cp -a $gitRepoDir/icu.git $gitRepoDir/backup-raw-subgit-icu.git
 
 # Fix commit IDs and SVN rev numbers.
-sh $icuScriptsDir/scripts/gitfilter.sh
+sh $icuConversionHelpersDir/scripts/gitfilter.sh
 
 # clean up.
 git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
@@ -60,7 +60,7 @@ git lfs migrate import --everything --include="*.jar,*.dat,*.zip,*.gz,*.bz2,*.gi
 git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
 git reflog expire --expire=now --all && git gc --prune=now --aggressive
 
-# Fix the .gitattributes files.
+# Fix the .gitattributes files. (this also takes a long time).
 git filter-branch --tree-filter "perl $icuConversionHelpersDir/scripts/clean-gitattributes.pl" --tag-name-filter cat --prune-empty -- --all || exit 1
 
 # clean up.
