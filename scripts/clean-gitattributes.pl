@@ -26,26 +26,30 @@ sub trim
 
 # Read the input file.
 {
-    open (my $fh, '<:encoding(UTF-8)', $input_filename)
-        or die "Could not open '$input_filename' $!";
+    # Only try to read in the file if it exists.
+    # We will still output/create the file later though.
+    if (-e $input_filename) {
+        open (my $fh, '<:encoding(UTF-8)', $input_filename)
+            or die "Could not open '$input_filename' $!";
 
-    while (my $line = <$fh>) {
-        
-        next if ($line =~ /^#/);        # Skip comments.
-        next if ($line =~ /^\s+$/);     # Skip blanks.
-        next if ($line =~ /^\Q* text=auto !eol\E$/);    # Skip default.
-        next if ($line =~ /^\Q*.\E/);     # Skip Git-LFS entries.
+        while (my $line = <$fh>) {
+            
+            next if ($line =~ /^#/);        # Skip comments.
+            next if ($line =~ /^\s+$/);     # Skip blanks.
+            next if ($line =~ /^\Q* text=auto !eol\E$/);    # Skip default.
+            next if ($line =~ /^\Q*.\E/);     # Skip Git-LFS entries.
 
-        my @fields = split(/\s+/, trim($line));
+            my @fields = split(/\s+/, trim($line));
 
-        my $filename = shift(@fields);
+            my $filename = shift(@fields);
 
-        if ( grep(/^-text/, @fields) ) {
-            my $newline = $filename . ' -text';
-            push (@lines, $newline);
+            if ( grep(/^-text/, @fields) ) {
+                my $newline = $filename . ' -text';
+                push (@lines, $newline);
+            }
         }
+        close $fh;
     }
-    close $fh;
 }
 
 # Output the new file.
