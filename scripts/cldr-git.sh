@@ -12,13 +12,6 @@ gitRepoDir=$(pwd)/git
 here=$(pwd)
 #icuConversionHelpersDir=/data/icu/icu-git
 #userHome=/home/jefgen
-
-if [ -d $gitRepoDir/cldr.git ];
-then
-    echo "cowardly refusing to overwrite icu.git"
-    exit 1
-fi
-
 set -x
 
 # Set the paths in the SubGit configuration file.
@@ -36,7 +29,14 @@ set -x
 # Actually convert from SVN to git (this takes a long time).
 #subgit import $gitRepoDir/icu.git || exit 1
 
-git svn clone  $svnRepoDir -A ${here}/scripts/authors-cldr.txt --stdlayout $gitRepoDir/cldr || exit 1
+
+if [ -d $gitRepoDir/cldr ];
+then
+    echo "cldr already is there- skipping clone"
+else
+    git svn clone  $svnRepoDir -A ${here}/scripts/authors-cldr.txt --stdlayout $gitRepoDir/cldr || exit 1
+fi
+
 
 exit 0
 
