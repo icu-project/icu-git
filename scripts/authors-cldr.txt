@@ -1,4 +1,5 @@
 (no name) = Unknown <unknown@svn.unicode.org>
+(no author) = Unknown <unknown@svn.unicode.org>
 agustin = Agustin Da Fieno Delucchi <agustin@svn.unicode.org>
 aheninger-oss = Andy Heninger <andy.heninger@gmail.com>
 alex = Alexey Pychenkov <alex@svn.unicode.org>
