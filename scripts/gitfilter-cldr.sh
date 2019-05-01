@@ -5,6 +5,7 @@
 # A filter to add in the ICU bug tracking numbers.
 
 set -x
-git filter-branch -f --msg-filter  'sed -e "s%cldrbug \([0-9]*\)[ :]*\(.*\)$%\2\\
-\\
-X-Ticket-URL: https://unicode.org/cldr/trac/ticket/\1%g"'  -- --all
+git filter-branch -f \
+    --msg-filter  "sed -E -f /home/srl/src/icu-git/scripts/cldr-filter.sed" \
+    --index-filter 'git rm --cached --ignore-unmatch log.txt test/log.txt' \
+    -- --all

@@ -34,33 +34,86 @@ if [ -d $gitRepoDir/cldr ];
 then
     echo "cldr already is there- skipping clone"
 else
-    git svn clone  $svnRepoDir -A ${here}/scripts/authors-cldr.txt --stdlayout $gitRepoDir/cldr || exit 1
+    git svn clone  $svnRepoDir -A ${here}/scripts/authors-cldr.txt \
+	-T trunk \
+	-t tags \
+	-b branches/maint \
+	-b branches/srl \
+	-b branches/emmons \
+        -b branches/icu52m1-work \
+        -b branches/jali01 \
+        -b branches/jchy \
+        -b branches/mark \
+        -b branches/markus \
+        -b branches/parth \
+        -b branches/pedberg \
+        -b branches/ribnitz \
+        -b branches/ryan \
+        -b branches/tbishop \
+        -b branches/tomzhang \
+        -b branches/umesh \
+        -b branches/yoshito \
+	$gitRepoDir/cldr || exit 1
+    
+#	-b branches \
+    #--rewriteRoot https://unicode.org/repos/cldr || exit 1
 fi
+
+
+if [ -d $gitRepoDir/cldr.git ];
+then
+    echo "cldr.git already there, getting out"
+    exit 1
+fi
+
+git init --bare $gitRepoDir/cldr.git
+
+cd $gitRepoDir/cldr.git
+git remote add srl295 https://github.com/srl295/cldr.git
+git symbolic-ref HEAD refs/heads/trunk
+
+cd $gitRepoDir/cldr
+git remote add bare $gitRepoDir/cldr.git
+git config remote.bare.push 'refs/remotes/*:refs/heads/*'
+git push bare
+
+cd $gitRepoDir/cldr.git
+
+# create the master branch
+git branch -m origin/trunk master || exit 1
+
+# clean up commit msg and also delete log.txt
+sh ${here}/scripts/gitfilter-cldr.sh || exit 1
+
+du -sh lfs objects
+
+# Migrate select file types to LFS. (this also takes awhile).
+git lfs migrate import --everything --include="*.jar,*.dat,*.zip,*.gz,*.bz2" || exit 1
+
+du -sh lfs objects
+# clean up. 
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+
+du -sh lfs objects
+
+echo 'getting out.. OK for now'
 
 
 exit 0
 
 
-cd $gitRepoDir/icu.git
-
 # Conversion was successful, no longer need SubGit.
 #subgit uninstall --purge $gitRepoDir/icu.git
-
-# clean up.
-git reflog expire --expire=now --all && git gc --prune=now --aggressive
 
 ## Make a backup
 #cp -a $gitRepoDir/icu.git $gitRepoDir/backup-raw-subgit-icu.git
 
 # Fix commit IDs and SVN rev numbers.
-sh ${here}/scripts/gitfilter-cldr.sh
 
 # clean up.
-git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
-git reflog expire --expire=now --all && git gc --prune=now --aggressive
+#git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
+#git reflog expire --expire=now --all && git gc --prune=now --aggressive
 
-# Migrate select file types to LFS. (this also takes awhile).
-git lfs migrate import --everything --include="*.jar,*.dat,*.zip,*.gz,*.bz2" || exit 1
 
 # clean up.
 git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
