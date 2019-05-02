@@ -43,18 +43,18 @@ else
         -b branches/icu52m1-work \
         -b branches/jali01 \
         -b branches/jchy \
-        -b branches/mark \
         -b branches/markus \
         -b branches/parth \
         -b branches/pedberg \
-        -b branches/ribnitz \
         -b branches/ryan \
         -b branches/tbishop \
         -b branches/tomzhang \
         -b branches/umesh \
         -b branches/yoshito \
+	-b branches \
 	$gitRepoDir/cldr || exit 1
-    
+
+    # NOT: mark ribnitz
 #	-b branches \
     #--rewriteRoot https://unicode.org/repos/cldr || exit 1
 fi
