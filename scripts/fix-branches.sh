@@ -13,6 +13,6 @@ do
     svn list ${svnRepoDir}/branches/${branch} | fgrep -q  -v / && (echo error branch ${branch} has a non-directory child. Exclude? ; exit 1)
     for sub in $(svn list ${svnRepoDir}/branches/${branch} | tr -d /);
     do
-	echo git branch -c ${sub} branches/${branch}/${sub}
+	echo git branch -c origin/${sub} branches/${branch}/${sub}
     done
 done

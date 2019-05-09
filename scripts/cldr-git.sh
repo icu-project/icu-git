@@ -70,6 +70,7 @@ git init --bare $gitRepoDir/cldr.git
 
 cd $gitRepoDir/cldr.git
 git remote add srl295 https://github.com/srl295/cldr.git
+git remote add cldr https://github.com/unicode-org/cldr.git
 git symbolic-ref HEAD refs/heads/trunk
 
 cd $gitRepoDir/cldr
@@ -85,6 +86,19 @@ git branch -m origin/trunk master || exit 1
 # clean up commit msg and also delete log.txt
 sh ${here}/scripts/gitfilter-cldr.sh || exit 1
 
+echo "backup to cldr-backup.git"
+cp -R $gitRepoDir/cldr.git $gitRepoDir/cldr-backup.git
+
+echo "Fix tags"
+sh -x ${here}/scripts/fix-tags.sh
+echo "fix branches"
+( cd ${here} ; sh ${here}/scripts/fix-branches.sh }  | sh -x
+echo "Fix special branches"
+sh -x ${here}/scripts/special-branches.sh
+echo "delete old origin branches"
+git branch -D $(git branch -a | grep '^[ ]*origin')
+echo "Done with branches"
+
 du -sh lfs objects
 
 # Migrate select file types to LFS. (this also takes awhile).
@@ -95,8 +109,12 @@ du -sh lfs objects
 git reflog expire --expire=now --all && git gc --prune=now --aggressive
 
 du -sh lfs objects
+--all
+
+
 
 echo 'getting out.. OK for now'
+
 
 
 exit 0
